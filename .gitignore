@@ -5,3 +5,4 @@ backend/prisma/migrations
 
 backend/src/upload/users
 frontend/src/assets/nuevos
+frontend-typescript
