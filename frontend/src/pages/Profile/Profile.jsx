@@ -1,7 +1,7 @@
 
 function Profile() {
   return (
-    <div>Profile</div>
+    <div className=" flex justify-center items-center">Profile</div>
   )
 }
 
