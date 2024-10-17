@@ -1,16 +1,3 @@
-import { BiMessageRoundedDetail } from "react-icons/bi";
-import {
-  FaPlus,
-  FaBell,
-  FaMoon,
-  FaHome,
-  FaStore,
-  FaSearch,
-} from "react-icons/fa";
-import { IoMenu } from "react-icons/io5";
-import { FaUserGroup } from "react-icons/fa6";
-import { PiMonitorPlayFill } from "react-icons/pi";
-import { FiLayout } from "react-icons/fi";
 
 function Nav() {
   return (

@@ -2,22 +2,26 @@ import { FaChevronDown } from "react-icons/fa";
 import { FaUserGroup } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
+import { useAuth } from "../../../../content/AuthContext";
 
 function SideBar() {
+
+  const {user} = useAuth()
+
   return (
     <>
       <ul className="p-4">
         <li>
           <Link
-            to={"/#"}
+            to={`/profile/${user.userId}`}
             className="flex items-center space-x-2 p-2 hover:bg-gray-200 hover:dark:bg-neutral-600 rounded-lg transition-all dark:text-slate-300 "
           >
             <img
-              src="images/profile.jpg"
+              src={user.avatar}
               alt="Profile picture"
               className="w-10 h-10 rounded-full"
             />
-            <span className="font-semibold">User Name</span>
+            <span className="font-semibold">{user.username}</span>
           </Link>
         </li>
         <li>

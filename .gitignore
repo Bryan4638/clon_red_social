@@ -1,3 +1,7 @@
 node_modules
+package-lock.json
 backend/prisma/migrations
 .env
+
+backend/src/upload/users
+frontend/src/assets/nuevos

@@ -27,14 +27,26 @@ export const register = async (req: Request, res: Response) => {
       data: {
         username,
         email,
+        avatar: "http://localhost:4000/public/images/user_default_profile.png",
+        banner: "http://localhost:4000/public/images/user_default_bg.jpg",
         password: hashedPassword,
         status: false,
       },
+      include:{
+        reactions: {
+          select:{
+            postId: true,
+            commentId: true
+          }
+        },
+      }
     });
 
     const token = await createToken(String(newUser.id));
 
     //await sendEmail(email, username, token);
+    const userReactions = newUser.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
+    
 
     res.cookie("token", token, {
       httpOnly: false,
@@ -43,9 +55,13 @@ export const register = async (req: Request, res: Response) => {
     });
 
     res.json({
+      userId: newUser.id,
       usermane: newUser.username,
       email: newUser.email,
-      id: newUser.id,
+      avatar: newUser.avatar,
+      banner: newUser.banner,
+      reactions: newUser.reactions,
+      userReactions
     });
   } catch (error) {
     console.log(error);
@@ -115,7 +131,20 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const user = await prisma.user.findFirst({ where: { email } });
+    const user = await prisma.user.findFirst({ 
+      where: { 
+        email 
+      },
+      include:{
+        reactions: {
+          select:{
+            postId: true,
+            commentId: true
+          }
+        },
+        
+      }
+    });
 
     if (!user) {
       return res.status(401).json(["Usuario no encontrado"]);
@@ -128,6 +157,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = await createToken(String(user.id));
+    const userReactions = user.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
 
     res.cookie("token", token, {
       httpOnly: false,
@@ -137,8 +167,12 @@ export const login = async (req: Request, res: Response) => {
     res.json({
       username: user.username,
       email: user.email,
+      avatar: user.avatar,
+      banner: user.banner,
       status: user.status,
-      id: user.id,
+      userId: user.id,
+      reactions: user.reactions,
+      userReactions
     });
   } catch (error) {
     console.log(error);
@@ -156,22 +190,38 @@ export const verifyToken = async (req: Request, res: Response) => {
 
   const userFound = await prisma.user.findUnique({
     where: { id: parseInt(decode.id) },
+    include:{
+      reactions: {
+        select:{
+          postId: true,
+          commentId: true
+        }
+      },
+    }
   });
   
   if (!userFound) return res.status(401).json({message: "User Not found"});
 
+  const userReactions = userFound.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
   return res.json({
+    
+    userId: userFound.id,
     username: userFound.username,
     email: userFound.email,
+    avatar: userFound.avatar,
+    banner: userFound.banner,
+    reactions: userFound.reactions,
+    userReactions 
   });
 };
 
-export const logout = (_req: Request, res: Response) => {
+export const logout = (req: Request, res: Response) => {
 
+  console.log("hola")
   res.cookie("token", "", {
     httpOnly: false,
     secure: true,
     sameSite: "none",
   });
-  return res.status(200);
+  return res.status(200).json({message: "logout"});
 };
