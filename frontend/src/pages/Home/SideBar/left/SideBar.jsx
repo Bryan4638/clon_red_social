@@ -13,8 +13,8 @@ function SideBar() {
       <ul className="p-4">
         <li>
           <Link
-            to={`/profile/${user.userId}`}
-            className="flex items-center space-x-2 p-2 hover:bg-gray-200 hover:dark:bg-neutral-600 rounded-lg transition-all dark:text-slate-300 "
+            to={`/profile?q=${user.userId}`}
+            className="flex items-center space-x-2 p-2 hover:bg-gray-200 hover:dark:bg-neutral-700 rounded-lg transition-all dark:text-slate-300 "
           >
             <img
               src={user.avatar}
@@ -27,7 +27,7 @@ function SideBar() {
         <li>
           <Link
             to={"/#"}
-            className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded-lg transition-all dark:text-slate-300 hover:dark:bg-neutral-600 dark:focus:bg-neutral-800"
+            className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded-lg transition-all dark:text-slate-300 hover:dark:bg-neutral-700 dark:focus:bg-neutral-800"
           >
             <FaUserGroup className="w-10 h-10 text-gray-500"></FaUserGroup>
             <span className="font-semibold">Friends</span>
@@ -37,7 +37,7 @@ function SideBar() {
         <li>
           <Link
             to={"/#"}
-            className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded-lg transition-all dark:text-slate-300 hover:dark:bg-neutral-600"
+            className="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded-lg transition-all dark:text-slate-300 hover:dark:bg-neutral-700"
           >
             <span className="w-10 h-10 rounded-full grid place-items-center bg-gray-300 dark:bg-gray-500">
               <FaChevronDown />

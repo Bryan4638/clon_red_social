@@ -44,10 +44,12 @@ export const createPost = async (req: Request, res: Response) => {
           },
         },
         comments: {
+          orderBy: {createdAt: 'desc'},
           select: {
             id: true, // Si solo quieres contar los comentarios, puedes omitir esto
             content: true,
             createdAt: true,
+            userId:true,
             user: {
               select: {
                 username: true,
@@ -94,6 +96,7 @@ export const getPosts = async (req: Request, res: Response) => {
     const postsFound = await prisma.post.findMany({
       skip: skip,
       take: take,
+      orderBy: {createdAt: 'desc' },
       select: {
         id: true,
         content: true,
@@ -116,10 +119,12 @@ export const getPosts = async (req: Request, res: Response) => {
         comments: {
           skip: 0,
           take: 3,
+          orderBy: {createdAt: 'desc'},
           select: {
             id: true,
             content: true,
             createdAt: true,
+            userId:true,
             user: {
               select: {
                 username: true,
@@ -191,10 +196,12 @@ export const getPostID = async (req: Request, res: Response) => {
           },
         },
         comments: {
+          orderBy: {createdAt: 'desc'},
           select: {
             id: true, // Si solo quieres contar los comentarios, puedes omitir esto
             content: true,
             createdAt: true,
+            userId:true,
             user: {
               select: {
                 username: true,

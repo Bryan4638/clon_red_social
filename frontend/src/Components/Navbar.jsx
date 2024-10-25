@@ -5,10 +5,22 @@ import { FaUserGroup } from "react-icons/fa6";
 import { PiMonitorPlayFill } from "react-icons/pi";
 import { Link, Outlet } from "react-router-dom";
 import AvatarUser from "./AvatarUser";
-import { useAuth } from "../content/AuthContext";
+import { useEffect, useState } from "react";
 
 function Navbar() {
-  const { setdarkMode, darkMode } = useAuth();
+  const [darkMode, setDarkMode] = useState(true);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  const setdarkMode = () => {
+    setDarkMode(!darkMode)
+  }
 
   return (
     <>
@@ -17,17 +29,17 @@ function Navbar() {
         <div className="flex items-center justify-between w-full md:w-max px-4 py-2">
           <Link to={"/"} className="mr-2 hidden md:inline-block">
             <img
-              src="images/logo.png"
+              src="images/logoSocial.jpg"
               alt="Facebook logo"
-              className="w-24 sm:w-20 lg:w-10 h-auto"
+              className="w-24 sm:w-20 lg:w-10 h-auto rounded-full"
             />
           </Link>
           <Link to={"/"} className="inline-block md:hidden">
-            <img src="images/logo.png" alt="" className="w-9 h-9" />
+            <img src="images/logoSocial.jpg" alt="" className="w-9 h-9 rounded-full" />
           </Link>
           <div className="flex items-center justify-between space-x-1">
             <div className="relative bg-gray-100 dark:bg-neutral-700 px-2 py-2 w-10 h-10 sm:w-11 sm:h-11 lg:h-10 lg:w-10 xl:w-max xl:pl-3 xl:pr-8 rounded-full flex items-center justify-center cursor-pointer">
-              <FaSearch className="bx bx-search-alt-2 text-xl xl:mr-2 dark:text-slate-300 text-gray-700" />
+              <FaSearch className="bx bx-search-alt-2 text-xl xl:mr-2 dark:text-emerald-400 text-emerald-400" />
               <input
                 type="text"
                 placeholder="Search"
@@ -46,7 +58,7 @@ function Navbar() {
           <li className="w-1/5 md:w-max text-center">
             <Link
               to={"/"}
-              className="w-full text-2xl py-2 px-3 xl:px-12 cursor-pointer text-center inline-block text-blue-500 border-b-4 border-blue-500"
+              className="w-full text-2xl py-2 px-3 xl:px-12 cursor-pointer text-center inline-block text-emerald-400 border-b-4 border-emerald-400"
             >
               <div className="flex justify-center items-center">
                 <FaHome />

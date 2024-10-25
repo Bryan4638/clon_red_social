@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router-dom'
 import {
   Avatar,
   Button,
@@ -49,14 +50,16 @@ export default function AvatarWithUserDropdown() {
       </MenuHandler>
       <MenuList className="p-2 dark:bg-neutral-700 border-none mt-2">
         <MenuItem className=" flex items-center pt-2 gap-2 rounded dark:hover:bg-neutral-600">
+        <Link to={`/profile?q=${user.userId}`} className="flex justify-center items-center ">
           <BiUserCircle className="text-2xl text-gray-500" />
           <Typography
             as="h1"
             variant="small"
-            className="mx-1 font-bold dark:text-slate-300"
+            className="mx-1 font-bold dark:text-slate-300 ml-2"
           >
             My profile
           </Typography>
+          </Link>
         </MenuItem>
         <MenuItem className=" flex items-center pt-2 gap-2 rounded dark:hover:bg-neutral-600">
           <BiEditAlt className="text-2xl text-gray-500" />

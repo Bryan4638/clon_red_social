@@ -57,7 +57,7 @@ function PostFormComment({ postId, addComment }) {
             {loading ? (
               <Spinner className="w-5 h-5" />
             ) : (
-              <button className="w-7 h-7 grid place-items-center rounded-full hover:bg-gray-200 cursor-pointer text-gray-500 dark:text-slate-300 dark:hover:bg-neutral-700 text-xl">
+              <button className="w-7 h-7 grid place-items-center rounded-full hover:bg-gray-200 cursor-pointer text-emerald-500 dark:text-emerald-400 dark:hover:bg-neutral-700 text-xl">
                 <BiSolidSend />
               </button>
             )}

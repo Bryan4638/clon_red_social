@@ -3,6 +3,7 @@ import useLike from "../../customHook/useLike";
 import { useAuth } from "../../content/AuthContext";
 import { BiLike, BiShare, BiBookmark } from "react-icons/bi";
 import { Avatar } from "@material-tailwind/react";
+import { Link } from "react-router-dom";
 
 function PostAction({ post }) {
   const { addLike, deleteLike } = useLike();
@@ -37,13 +38,15 @@ function PostAction({ post }) {
                   .slice(-5, post.reactions.length)
                   .map((reaction) => {
                     return (
-                      <Avatar
-                        key={reaction.id}
-                        variant="circular"
-                        alt="user 1"
-                        className="border-2 h-7 w-7 border-white dark:border-zinc-800 hover:z-10 focus:z-10"
-                        src={reaction.user.avatar}
-                      />
+                      <Link to={`/profile?q=${reaction.userId}`}>
+                        <Avatar
+                          key={reaction.id}
+                          variant="circular"
+                          alt="user 1"
+                          className="border-2 h-7 w-7 border-white dark:border-zinc-800 hover:z-10 focus:z-10"
+                          src={reaction.user.avatar}
+                        />
+                      </Link>
                     );
                   })}
               </div>
@@ -66,7 +69,7 @@ function PostAction({ post }) {
               onClick={handleLiked}
               className="w-2/5 flex space-x-2 justify-center items-center hover:bg-gray-100 hover:dark:bg-neutral-700 text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-slate-300"
             >
-              <BiLike className={isLiked ? "text-cyan-500" : ""} />
+              <BiLike className={isLiked ? "text-emerald-400" : ""} />
               <span className="text-sm font-semibold cursor-pointer">Like</span>
             </button>
             <div className="w-2/5 flex space-x-2 justify-center items-center hover:bg-gray-100 hover:dark:bg-neutral-700 text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-slate-300">
