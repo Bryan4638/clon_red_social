@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 
-
 const prisma = new PrismaClient();
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -22,8 +21,13 @@ export const getUsers = async (req: Request, res: Response) => {
         username: true,
         email: true,
         avatar: true,
+        _count: {
+          select: {
+            followers: true, 
+            following: true, 
+          },
+        },
       },
-      
     });
 
     const totalUsers = await prisma.user.count();
@@ -68,9 +72,9 @@ export const getUserId = async (req: Request, res: Response) => {
     });
 
     const totalPost = await prisma.post.count({
-      where:{
-        userId : id
-      }
+      where: {
+        userId: id,
+      },
     });
     const totalPages = Math.ceil(totalPost / pageSize);
 
@@ -98,10 +102,10 @@ export const updaetUser = async (req: Request, res: Response) => {
     const { username, email, password, bio } = req.body;
 
     const userFound = await prisma.user.findUnique({
-      where:{
-        id
-      }
-    })
+      where: {
+        id,
+      },
+    });
 
     if (!userFound) return res.status(403).json({ message: "User not Found" });
 
@@ -119,7 +123,6 @@ export const updaetUser = async (req: Request, res: Response) => {
       },
     });
 
-
     res.status(200).json({
       data: userUpdate,
     });
@@ -134,10 +137,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
 
     const userDelete = await prisma.user.findUnique({
-      where:{
-        id
-      }
-    })
+      where: {
+        id,
+      },
+    });
 
     if (!userDelete) return res.status(403).json({ message: "User not Found" });
 
@@ -149,6 +152,30 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     res.status(204).json({
       message: "User deleted",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server Error" });
+  }
+};
+
+export const userFollowing = async (req: Request, res: Response) => {
+  try {
+    const userfollowingID = Number(req.params.id);
+
+    const id = req.userId;
+
+    const user = await prisma.follower.create({
+      data: {
+        followerId: userfollowingID,
+        followedId: id,
+      },
+    });
+
+    console.log(user);
+
+    res.status(204).json({
+      message: "User followind",
     });
   } catch (error) {
     console.log(error);

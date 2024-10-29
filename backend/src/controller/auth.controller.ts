@@ -128,7 +128,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = await createToken(String(user.id));
-
+    console.log(token)
     res.cookie("token", token, {
       httpOnly: false,
       secure: true,

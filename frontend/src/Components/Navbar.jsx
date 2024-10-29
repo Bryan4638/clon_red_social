@@ -12,7 +12,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { PiMonitorPlayFill } from "react-icons/pi";
 import { FiLayout } from "react-icons/fi";
 import { Outlet } from "react-router-dom";
-import AvatarUser from "./AvatarUser";
+//import AvatarUser from "./AvatarUser";
 
 function Navbar() {
 
@@ -130,7 +130,7 @@ function Navbar() {
 
         {/* RIGHT NAV */}
         <ul className="hidden md:flex mx-4 items-center justify-center">
-         <AvatarUser/>
+         {/* <AvatarUser/> */}
           <li>
             <div className="text-xl hidden xl:grid place-items-center bg-gray-200 dark:bg-neutral-700 dark:text-slate-300 rounded-full mx-1 p-2 cursor-pointer hover:bg-gray-300 hover:dark:bg-neutral-600 relative">
               <BiMessageRoundedDetail />

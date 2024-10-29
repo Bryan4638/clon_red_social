@@ -14,6 +14,7 @@ export const authMiddleware = async (
 ) => {
   try {
     const { token } = req.cookies;
+    
     if (!token) {
       return res
         .status(401)
