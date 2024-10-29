@@ -28,7 +28,7 @@ function Login() {
   return (
     <section className="min-h-screen flex items-stretch text-white ">
       <div className="w-full flex items-center justify-center text-center px-0 z-0 bg-gray-800">
-        <div className=" w-1/3 py-6 z-20 bg-zinc-900 rounded-xl bg-gray-900">
+        <div className=" w-1/3 py-6 z-20 bg-zinc-900 rounded-xl ">
           <div className=" mb-6 py-2">
             <h1 className=" text-white text-6xl font-bold">Login</h1>
           </div>

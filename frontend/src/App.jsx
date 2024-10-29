@@ -22,9 +22,10 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<NavBar />}>
+              <Route path="/profile" element={<Profile />} />
               <Route element={<Home />}>
                 <Route path="/" element={<Listpost />} />
-                <Route path="/profile/:id" element={<Profile />} />
+                <Route path="/post-detail" element={<PostDetail/>}/>
                 <Route path="/post-edit" element={<PostEdit />} />
               </Route>
             </Route>

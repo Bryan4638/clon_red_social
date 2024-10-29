@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 
-
 const prisma = new PrismaClient();
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -23,7 +22,6 @@ export const getUsers = async (req: Request, res: Response) => {
         email: true,
         avatar: true,
       },
-      
     });
 
     const totalUsers = await prisma.user.count();
@@ -60,17 +58,23 @@ export const getUserId = async (req: Request, res: Response) => {
         id,
       },
       include: {
+        _count: true,
         posts: {
           skip,
           take,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            image: true,
+          },
         },
       },
     });
 
     const totalPost = await prisma.post.count({
-      where:{
-        userId : id
-      }
+      where: {
+        userId: id,
+      },
     });
     const totalPages = Math.ceil(totalPost / pageSize);
 
@@ -98,10 +102,10 @@ export const updaetUser = async (req: Request, res: Response) => {
     const { username, email, password, bio } = req.body;
 
     const userFound = await prisma.user.findUnique({
-      where:{
-        id
-      }
-    })
+      where: {
+        id,
+      },
+    });
 
     if (!userFound) return res.status(403).json({ message: "User not Found" });
 
@@ -119,7 +123,6 @@ export const updaetUser = async (req: Request, res: Response) => {
       },
     });
 
-
     res.status(200).json({
       data: userUpdate,
     });
@@ -134,10 +137,10 @@ export const deleteUser = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
 
     const userDelete = await prisma.user.findUnique({
-      where:{
-        id
-      }
-    })
+      where: {
+        id,
+      },
+    });
 
     if (!userDelete) return res.status(403).json({ message: "User not Found" });
 

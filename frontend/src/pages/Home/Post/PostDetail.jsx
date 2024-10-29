@@ -48,7 +48,7 @@ function PostDetail() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [countReactions]);
 
   const handleCLickComment = (event) => {
     setIsComments(!isComments);
@@ -69,37 +69,39 @@ function PostDetail() {
     setIsLiked(!isLiked);
   };
 
+  const handleClickBack = () => {
+    window.history.back();
+  };
+
   return (
     <>
-      <div className="bg-white dark:bg-dark-third max-w-full px-4 py-5 border-b rounded-lg mb-2 dark:border-dark-second border-gray-200 sm:px-6">
+      <div className="bg-white dark:bg-zinc-800 dark:text-slate-300 dark:border-zinc-600 max-w-full px-4 py-5 border-b rounded-lg mb-2 border-gray-200 sm:px-6">
         <div className="flex justify-between pb-3">
-          <h3 className="text-xl leading-6 cursor-default dark:text-dark-txt prose rounded font-bold text-gray-900">
+          <h3 className="text-xl leading-6 cursor-default  prose rounded font-bold text-gray-900 dark:text-slate-100">
             Post Details
           </h3>
           <button
-            onClick={(event) => {
-              window.history.back();
-            }}
-            className="rounded-full w-8 h-8 hover:bg-gray-200 bg-gray-100 flex justify-center items-center"
+            onClick={handleClickBack}
+            className="rounded-full w-8 h-8 hover:bg-gray-200 bg-gray-100 hover:dark:bg-neutral-600 dark:bg-neutral-700 flex justify-center items-center"
           >
             <BiArrowBack className="w-5 h-5" />
           </button>
         </div>
-        <p className="mt-1 text-sm cursor-default dark:text-dark-txt text-gray-500">
+        <p className="mt-1 text-sm cursor-default  text-gray-500">
           This is a post detail view, you can see the content, comment and share
           your thoughts on this topic. Hint: Add a comment by clicking in the
           button below that says <span className="font-bold">Comment</span>
         </p>
       </div>
-      {loading && (
+      {loading && post == null &&(
         <div className="flex justify-center items-center pt-16">
           <Spinner className=" h-8 w-8" />
         </div>
       )}
       {!loading && error && <h1>Ha avido un error</h1>}
-      {!loading && !error && post !== null && (
+      {!error && post !== null && (
         <>
-          <div className="bg-gray-50 max-w-full max-h-max dark:bg-dark-second shadow px-4 py-5 sm:rounded-lg sm:p-6">
+          <div className="bg-gray-50 dark:bg-zinc-800 dark:text-slate-100 max-w-full max-h-max dark:bg-dark-second shadow px-4 py-5 sm:rounded-lg sm:p-6">
             <div className="flex justify-end">
               <PostMenu
                 isOpen={post.userId === user.userId}
@@ -123,6 +125,7 @@ function PostDetail() {
                     <img
                       src={`${SERVER_URL}/public/users/${ima}`}
                       alt="Post image"
+                      className="rounded-md"
                     />
                   </Link>
                 ))}
@@ -144,7 +147,7 @@ function PostDetail() {
                   <span className="bg-green-500 w-3 h-3 rounded-full absolute right-0 top-3/4 border-white border-2"></span>
                 </Link>
                 <div>
-                  <div className="font-semibold dark:text-dark-txt hover:text-indigo-500">
+                  <div className="font-semibold  hover:text-indigo-500">
                     <Link href="#">{post.user.username}</Link>
                   </div>
                   <span className="text-sm text-gray-500">
@@ -155,57 +158,78 @@ function PostDetail() {
               {/* POST MENU ACTION */}
             </div>
             {/* <!-- END POST AUTHOR --> */}
-
-            {/* <!-- POST REACT --> */}
-            {post.reactions.length >= 1 && (
-              <div className="px-4 pt-2 pb-1">
-                <div className=" block border border-gray-200 dark:border-dark-third border-l-0 border-r-0 py-2">
-                  <div className="flex items-center justify-start">
-                    <div className="flex items-center -space-x-4">
-                      {post.reactions.map((reaction) => {
-                        return (
-                          <Avatar
-                            key={reaction.id}
-                            variant="circular"
-                            alt="user 1"
-                            className="border-2 h-7 w-7 border-white hover:z-10 focus:z-10"
-                            src={reaction.user.avatar}
-                          />
-                        );
-                      })}
-                    </div>
-                    <span className="pl-1 font-semibold text-gray-500">
-                      {
-                        post.reactions.length > 1 ?`Le gusta a ${post.reactions[0].user.username} y ${countReactions-1} más` : `Le gusta a ${post.reactions[0].user.username}`
-                      }
-                      
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* <!-- END POST REACT --> */}
-
+            
             {/* <!-- POST CONTENT --> */}
-            <div className="body text-justify px-4 py-2 pb-3 dark:text-dark-txt">
-              <h3 className="text-lg leading-6 font-medium dark:text-dark-txt text-gray-900">
+            <div className="body text-justify px-4 py-2 pb-3 ">
+              <h3 className="text-lg leading-6 font-medium  text-gray-900 dark:text-gray-100">
                 {post.content}
               </h3>
             </div>
             {/* <!-- END POST CONTENT --> */}
 
-            <div className="py-2 px-4 max-h-96 overflow-scroll">
-              {post.comments.map((comment) => (
-                <Comment commnet={comment} key={comment.id} />
-              ))}
+            {/* <!-- POST REACT --> */}
+
+            <div className="px-4 pt-2 pb-1 h-12">
+              <div
+                className={
+                  post.comments.length > 0
+                    ? " block border border-gray-200 dark:border-zinc-700 border-l-0 border-r-0 py-2"
+                    : ""
+                }
+              >
+                {countReactions >= 1 && post.reactions.length !== 0 && (
+                  <div className="flex items-center justify-start">
+                    <div className="flex items-center -space-x-4">
+                      {post.reactions.map((reaction) => {
+                        return (
+                          <Link
+                            to={`/profile?q=${reaction.userId}`}
+                            key={reaction.id}
+                          >
+                            <Avatar
+                              key={reaction.id}
+                              variant="circular"
+                              alt="user 1"
+                              className="border-2 h-7 w-7 border-white dark:border-gray-700 hover:z-10 focus:z-10"
+                              src={reaction.user.avatar}
+                            />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                    <span className="pl-1 font-semibold text-gray-500">
+                      {countReactions > 1
+                        ? `Le gusta a ${post.reactions[0].user.username} y ${
+                            countReactions - 1
+                          } más`
+                        : `Le gusta a ${post.reactions[0].user.username}`}
+                    </span>
+                  </div>
+                )}
+                {countReactions === 0 && (
+                  <span className="pl-1 font-semibold text-gray-500">
+                    Nadie ha reaccionado a este Post
+                  </span>
+                )}
+              </div>
             </div>
 
+            {/* <!-- END POST REACT --> */}
+
+            {post.comments.length > 0 && (
+              <div className="py-2 px-4 max-h-96  h-screen hide-scrollbar overflow-y-scroll ">
+                {post.comments.map((comment) => (
+                  <Comment commnet={comment} key={comment.id} />
+                ))}
+              </div>
+            )}
+
             <div className=" px-4">
-              <div className="border border-gray-200 dark:border-dark-third border-l-0 border-r-0 py-1">
+              <div className="border border-gray-200 dark:border-zinc-700 border-l-0 border-r-0 py-1">
                 <div className="flex space-x-2">
                   <button
                     onClick={handleLiked}
-                    className="w-1/3  space-x-2 block hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-1 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt"
+                    className="w-1/3  space-x-2 block hover:bg-gray-100 dark:hover:bg-neutral-600 text-xl py-1 rounded-lg cursor-pointer text-gray-500 "
                   >
                     <div className="flex justify-center items-center text-2xl pl-2">
                       <BiLike className={isLiked ? "text-cyan-500" : ""} />
@@ -217,7 +241,7 @@ function PostDetail() {
                     </div>
                   </button>
 
-                  <div className="w-1/3 block space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt">
+                  <div className="w-1/3 block space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-neutral-600 text-xl py-2 rounded-lg cursor-pointer text-gray-500 ">
                     <div className="flex justify-center items-center text-2xl pl-2">
                       <BiBookmark />
                     </div>
@@ -228,7 +252,7 @@ function PostDetail() {
 
                   <button
                     onClick={handleCLickComment}
-                    className="w-1/3 block space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt"
+                    className="w-1/3 block space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-neutral-600 text-xl py-2 rounded-lg cursor-pointer text-gray-500 "
                   >
                     <div className="flex justify-center items-center text-2xl pl-2">
                       <BiComment />
@@ -240,7 +264,7 @@ function PostDetail() {
 
                   <div
                     to={"#"}
-                    className="w-1/3 block space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt"
+                    className="w-1/3 block space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-neutral-600 text-xl py-2 rounded-lg cursor-pointer text-gray-500 "
                   >
                     <div className="flex justify-center items-center text-2xl pl-2">
                       <BiShare />

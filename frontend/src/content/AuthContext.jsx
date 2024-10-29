@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
 
 
   const signIn = async (values) => {
@@ -32,7 +31,6 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       setIsAuth(true);
     } catch (error) {
-      //console.log(error)
       setErrors(error.response.data);
     }
   };
@@ -44,7 +42,7 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       setIsAuth(true);
     } catch (error) {
-      console.log(error)
+      //console.log(error)
       setErrors(error.response.data);
     }
   };
@@ -94,22 +92,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
 
-  // useEffect(() => {
-  //   if (darkMode) {
-  //     document.documentElement.classList.add("dark");
-  //   } else {
-  //     document.documentElement.classList.remove("dark");
-  //   }
-  // }, [darkMode]);
-
-  const setdarkMode = () => {
-    setDarkMode(!darkMode)
-  }
+  
 
   return (
     <AuthContext.Provider
       value={{
-        darkMode,
         user,
         isAuth,
         errors,
@@ -117,7 +104,6 @@ export const AuthProvider = ({ children }) => {
         signIn,
         signUp,
         logout,
-        setdarkMode
       }}
     >
       {children}

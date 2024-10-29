@@ -5,30 +5,30 @@ function SideBar() {
       <div className="w-1/5 pt-16 h-full hidden xl:block px-4 fixed top-0 right-0">
         <div className="h-full">
           <div className="flex justify-between items-center px-4 pt-4">
-            <span className="font-semibold text-gray-500 text-lg dark:text-dark-txt">
+            <span className="font-semibold text-gray-500 text-lg dark:text-gray-50">
               Firend requests
             </span>
-            <span className="text-blue-500 cursor-pointer hover:bg-gray-200 dark:hover:bg-dark-third p-2 rounded-md">
+            <span className="text-emerald-500 cursor-pointer hover:bg-gray-200 dark:hover:bg-neutral-700 p-2 rounded-md">
               See All
             </span>
           </div>
           <div className="p-2">
             <a
               href="#"
-              className="flex items-center space-x-4 p-2 hover:bg-gray-200 dark:hover:bg-dark-third rounded-lg transition-all"
+              className="flex items-center space-x-4 p-2 hover:bg-gray-200 dark:hover:bg-neutral-700 rounded-lg transition-all"
             >
               <img
-                src="./images/avt.jpg"
+                src="./images/image102.png"
                 alt="Profile picture"
                 className="w-16 h-16 rounded-full"
               />
               <div className="flex-1 h-full">
-                <div className="dark:text-dark-txt">
+                <div className="dark:text-gray-50">
                   <span className="font-semibold">Sakura Hinata</span>
                   <span className="float-right">6d</span>
                 </div>
                 <div className="flex space-x-2 mt-2">
-                  <div className="w-1/2 bg-blue-500 cursor-pointer py-1 text-center font-semibold text-white rounded-lg">
+                  <div className="w-1/2 bg-emerald-500 cursor-pointer py-1 text-center font-semibold text-white rounded-lg">
                     Confirm
                   </div>
                   <div className="w-1/2 bg-gray-300 cursor-pointer py-1 text-center font-semibold text-black rounded-lg">
@@ -38,7 +38,7 @@ function SideBar() {
               </div>
             </a>
           </div>
-          <div className="border-b border-gray-200 dark:border-dark-third mt-6"></div>
+          <div className="border-b border-gray-200 dark:border-zinc-700 mt-6"></div>
           {/* <!-- CONTACTS --> */}
           <div className="flex justify-between items-center px-4 pt-4 text-gray-500 dark:text-dark-txt">
             <span className="font-semibold text-lg">Contacts</span>

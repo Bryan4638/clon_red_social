@@ -1,16 +1,19 @@
 import HumanizedDate from "./HumanizedDate";
 import { useAuth } from "../content/AuthContext";
+import { Link } from "react-router-dom";
 
 function Comment({ commnet }) {
   const { user } = useAuth();
 
   return (
     <div className="flex max-h-screen space-x-2 space-y-4">
-      <img
-        src={commnet.user.avatar}
-        alt="Profile picture"
-        className="w-9 h-9 rounded-full"
-      />
+      <Link to={`/profile?q=${commnet.userId}`}>
+        <img
+          src={commnet.user.avatar}
+          alt="Profile picture"
+          className="w-9 h-9 rounded-full"
+        />
+      </Link>
       <div>
         <div className="bg-gray-100 dark:bg-neutral-700 p-2 rounded-2xl text-sm">
           <span className="font-semibold block">{commnet.user.username}</span>

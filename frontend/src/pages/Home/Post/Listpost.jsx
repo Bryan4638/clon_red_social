@@ -52,7 +52,7 @@ function Listpost() {
         )}
         {isNextPage && posts.length >= 1 && !loading && (
           <button
-            className="bg-light-blue-500 h-10 w-52 rounded-md text-white font-medium mt-3 mb-1"
+            className="bg-emerald-500 h-10 w-52 rounded-md text-white font-medium mt-3 mb-1"
             onClick={() => {
               setCurrentPage(currentPage + 1);
             }}

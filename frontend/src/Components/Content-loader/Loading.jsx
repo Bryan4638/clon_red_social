@@ -1,5 +1,4 @@
-import React from "react";
-import Nav from "./Nav";
+import Nav from "../Content-loader/navbar/Nav";
 import { Spinner } from "@material-tailwind/react";
 
 function Loading() {
@@ -7,7 +6,7 @@ function Loading() {
     <>
       <Nav />
       <div className="flex justify-center items-center h-screen ">
-        <Spinner color="blue" className="w-15 h-15 text-cyan-200" />
+        <Spinner color="green" className="w-15 h-15 text-emerald-400" />
       </div>
     </>
   );

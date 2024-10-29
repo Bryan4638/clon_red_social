@@ -16,7 +16,7 @@ function Footer() {
         <span> . </span>
         <a href="#">More</a>
         <span> . </span>
-        <span>Facebook © 2021</span>
+        <span>Space © 2024</span>
       </div>
     </>
   );

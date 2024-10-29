@@ -12,9 +12,12 @@ import { Link } from "react-router-dom";
 function Post({ post, deletePost }) {
   const { user } = useAuth();
   const [comments, setComments] = useState(post.comments);
+  const [countComments, setCountComments] = useState(post._count.comments);
+
 
   const addComment = (comment) => {
-    setComments([...comments, comment]);
+    setComments([comment, ...comments]);
+    setCountComments(countComments + 1)
   };
 
   return (
@@ -24,17 +27,19 @@ function Post({ post, deletePost }) {
         <div className="flex items-center justify-between px-4 py-2">
           <div className="flex space-x-2 items-center">
             <div className="relative">
-              <img
-                src={post.user.avatar}
-                alt="picture"
-                className="w-10 h-10 rounded-full"
-              />
-              <span className="bg-green-500 w-3 h-3 rounded-full absolute right-0 top-3/4 border-white border-2"></span>
+              <Link to={`/profile?q=${post.userId}`}>
+                <img
+                  src={post.user.avatar}
+                  alt="picture"
+                  className="w-10 h-10 rounded-full"
+                />
+                <span className="bg-green-500 w-3 h-3 rounded-full absolute right-0 top-3/4 border-white border-2"></span>
+              </Link>
             </div>
             <div>
-              <a href="#">
+              <Link to={`/profile?q=${post.userId}`}>
                 <div className="font-semibold">{post.user.username}</div>
-              </a>
+              </Link>
               <span className="text-sm text-gray-500 dark:text-slate-400">
                 <HumanizedDate date={post.createdAt} />
               </span>
@@ -73,7 +78,7 @@ function Post({ post, deletePost }) {
         {post._count.comments > 3 && (
           <div className="py-2 px-6 pb-2">
             <span className="text-sm cursor-pointer hover:border-b-2 hover:border-gray-600 font-semibold text-gray-600">
-              Ver los {post._count.comments} comentarios
+              Ver los {countComments} comentarios
             </span>
           </div>
         )}
