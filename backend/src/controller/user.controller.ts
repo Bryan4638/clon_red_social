@@ -21,6 +21,12 @@ export const getUsers = async (req: Request, res: Response) => {
         username: true,
         email: true,
         avatar: true,
+        _count: {
+          select: {
+            followers: true, 
+            following: true, 
+          },
+        },
       },
     });
 
@@ -152,6 +158,30 @@ export const deleteUser = async (req: Request, res: Response) => {
 
     res.status(204).json({
       message: "User deleted",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server Error" });
+  }
+};
+
+export const userFollowing = async (req: Request, res: Response) => {
+  try {
+    const userfollowingID = Number(req.params.id);
+
+    const id = req.userId;
+
+    const user = await prisma.follower.create({
+      data: {
+        followerId: userfollowingID,
+        followedId: id,
+      },
+    });
+
+    console.log(user);
+
+    res.status(204).json({
+      message: "User followind",
     });
   } catch (error) {
     console.log(error);

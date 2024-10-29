@@ -3,9 +3,11 @@ import { FaBell, FaHome, FaStore, FaSearch } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
 import { PiMonitorPlayFill } from "react-icons/pi";
+
 import { Link, Outlet } from "react-router-dom";
 import AvatarUser from "./AvatarUser";
 import { useEffect, useState } from "react";
+
 
 function Navbar() {
   const [darkMode, setDarkMode] = useState(true);
@@ -124,6 +126,7 @@ function Navbar() {
               {darkMode ? <BiSun /> : <BiMoon />}
             </button>
           </li>
+
           <li>
             <div 
               className="text-xl hidden xl:grid place-items-center bg-gray-200 dark:bg-neutral-700 dark:text-slate-300 rounded-full mx-1 p-2 cursor-pointer hover:bg-gray-300 hover:dark:bg-neutral-600 relative">

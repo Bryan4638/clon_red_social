@@ -157,6 +157,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = await createToken(String(user.id));
+
     const userReactions = user.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
 
     res.cookie("token", token, {
