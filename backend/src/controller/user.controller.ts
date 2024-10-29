@@ -50,7 +50,6 @@ export const getUserId = async (req: Request, res: Response) => {
 
     const pageSize = parseInt(req.query.pageSize as string) || 5;
 
-
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -59,58 +58,14 @@ export const getUserId = async (req: Request, res: Response) => {
         id,
       },
       include: {
+        _count: true,
         posts: {
           skip,
           take,
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
-            content: true,
             image: true,
-            createdAt: true,
-            updatedAt: true,
-            userId: true,
-            user: {
-              select: {
-                username: true,
-                avatar: true,
-              },
-            },
-            _count: {
-              select: {
-                reactions: true,
-                comments: true,
-              },
-            },
-            comments: {
-              skip: 0,
-              take: 3,
-              orderBy: { createdAt: "desc" },
-              select: {
-                id: true,
-                content: true,
-                createdAt: true,
-                userId: true,
-                user: {
-                  select: {
-                    username: true,
-                    avatar: true,
-                  },
-                },
-              },
-            },
-            reactions: {
-              select: {
-                id: true,
-                userId: true,
-                user: {
-                  select: {
-                    username: true,
-                    avatar: true,
-                  },
-                },
-              },
-            },
           },
         },
       },

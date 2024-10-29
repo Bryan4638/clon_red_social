@@ -12,9 +12,12 @@ import { Link } from "react-router-dom";
 function Post({ post, deletePost }) {
   const { user } = useAuth();
   const [comments, setComments] = useState(post.comments);
+  const [countComments, setCountComments] = useState(post._count.comments);
+
 
   const addComment = (comment) => {
     setComments([comment, ...comments]);
+    setCountComments(countComments + 1)
   };
 
   return (
@@ -75,7 +78,7 @@ function Post({ post, deletePost }) {
         {post._count.comments > 3 && (
           <div className="py-2 px-6 pb-2">
             <span className="text-sm cursor-pointer hover:border-b-2 hover:border-gray-600 font-semibold text-gray-600">
-              Ver los {post._count.comments} comentarios
+              Ver los {countComments} comentarios
             </span>
           </div>
         )}

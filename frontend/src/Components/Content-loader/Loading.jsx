@@ -1,5 +1,4 @@
-import React from "react";
-import Nav from "./Nav";
+import Nav from "../Content-loader/navbar/Nav";
 import { Spinner } from "@material-tailwind/react";
 
 function Loading() {

@@ -25,7 +25,7 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route element={<Home />}>
                 <Route path="/" element={<Listpost />} />
-
+                <Route path="/post-detail" element={<PostDetail/>}/>
                 <Route path="/post-edit" element={<PostEdit />} />
               </Route>
             </Route>

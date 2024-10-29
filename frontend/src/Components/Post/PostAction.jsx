@@ -9,7 +9,7 @@ function PostAction({ post }) {
   const { addLike, deleteLike } = useLike();
   const { user } = useAuth();
   const [countReactions, setCountReactions] = useState(post._count.reactions);
-  const [countComments, setCountComments] = useState(post._count.comments);
+
   const [isLiked, setIsLiked] = useState(user.userReactions.includes(post.id));
 
   const handleLiked = () => {
@@ -29,35 +29,35 @@ function PostAction({ post }) {
 
   return (
     <>
-      {post.reactions.length >= 1 && (
-        <div className="px-4 pt-2 pb-1">
-          <div className=" block border border-gray-200 dark:border-zinc-700 border-l-0 border-r-0 py-2">
-            <div className="flex items-center justify-start">
-              <div className="flex items-center -space-x-4">
-                {post.reactions
-                  .slice(-5, post.reactions.length)
-                  .map((reaction) => {
-                    return (
-                      <Link to={`/profile?q=${reaction.userId}`}>
-                        <Avatar
-                          key={reaction.id}
-                          variant="circular"
-                          alt="user 1"
-                          className="border-2 h-7 w-7 border-white dark:border-zinc-800 hover:z-10 focus:z-10"
-                          src={reaction.user.avatar}
-                        />
-                      </Link>
-                    );
-                  })}
-              </div>
-              <span className="pl-1 font-semibold text-gray-500">
-                {post.reactions.length > 1
-                  ? `Le gusta a ${post.reactions[0].user.username} y ${
-                      countReactions - 1
-                    } más`
-                  : `Le gusta a ${post.reactions[0].user.username}`}
-              </span>
+      {countReactions >= 1 && post.reactions.length !== 0 && (
+        <div className="px-4 pt-1 pb-1">
+          <div className="flex items-center justify-start">
+            <div className="flex items-center -space-x-4">
+              {post.reactions
+                .slice(-5, post.reactions.length)
+                .map((reaction) => {
+                  return (
+                    <Link
+                      to={`/profile?q=${reaction.userId}`}
+                      key={reaction.id}
+                    >
+                      <Avatar
+                        variant="circular"
+                        alt="user 1"
+                        className="border-2 h-7 w-7 border-white dark:border-zinc-800 hover:z-10 focus:z-10"
+                        src={reaction.user.avatar}
+                      />
+                    </Link>
+                  );
+                })}
             </div>
+            <span className="pl-1 font-semibold text-gray-500">
+              {countReactions > 1
+                ? `Le gusta a ${post.reactions[0].user.username} y ${
+                    countReactions - 1
+                  } más`
+                : `Le gusta a ${post.reactions[0].user.username}`}
+            </span>
           </div>
         </div>
       )}

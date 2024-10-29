@@ -38,7 +38,7 @@ export default function AvatarWithUserDropdown() {
             variant="circular"
             size="md"
             alt="tania andrew"
-            className="h-10 w-10 p-0.5"
+            className="h-8 w-8 p-0.5 m-1"
             src={user.avatar}
           />
           <div className="flex w-full justify-center items-center">
