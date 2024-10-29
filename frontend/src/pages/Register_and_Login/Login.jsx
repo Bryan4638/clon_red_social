@@ -10,7 +10,7 @@ function Login() {
     formState: { errors },
   } = useForm();
 
-  const { signIn, errors: loginErrors, isAuth } = useAuth();
+  const { signIn, errors: loginErrors, isAuth, setdarkMode } = useAuth();
 
   const navigate = useNavigate();
 
@@ -18,25 +18,29 @@ function Login() {
     if (isAuth) {
       navigate("/");
     }
-  }, [isAuth,navigate]);
+  }, [isAuth, navigate]);
 
   const onSubmit = handleSubmit(async (values) => {
+    console.log(values);
     signIn(values);
   });
 
   return (
     <section className="min-h-screen flex items-stretch text-white ">
-      <div className="w-full flex items-center justify-center text-center px-0 z-0 bg-zinc-800">
+      <div className="w-full flex items-center justify-center text-center px-0 z-0 bg-gray-800">
         <div className=" w-1/3 py-6 z-20 bg-zinc-900 rounded-xl ">
           <div className=" mb-6 py-2">
             <h1 className=" text-white text-6xl font-bold">Login</h1>
           </div>
           {loginErrors.map((error, i) => (
-              <div className=" bg-rose-500 text-white p-2 rounded-2xl mx-auto w-2/3" key={i}>
-                {error}
-              </div>
-            ))} 
-            
+            <div
+              className=" bg-rose-500 text-white bg-red-400 p-2 rounded-2xl mx-auto w-2/3"
+              key={i}
+            >
+              {error}
+            </div>
+          ))}
+
           <form
             onSubmit={onSubmit}
             className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
@@ -46,17 +50,17 @@ function Login() {
                 type="email"
                 {...register("email", { required: true })}
                 placeholder="Email"
-                className="block w-full p-4 text-lg rounded-2xl bg-zinc-700"
+                className="block w-full p-4 text-lg rounded-2xl text-gray-900"
               />
               {errors.email && (
-                <p className="text-red-500 text-left mt-2 ml-2">
+                <p className="text-red-400 text-sm text-left mt-1 ml-2">
                   Email is required
                 </p>
               )}
             </div>
             <div className="pb-2 pt-4">
               <input
-                className="block w-full p-4 text-lg rounded-2xl bg-zinc-700"
+                className="block w-full p-4 text-lg rounded-2xl text-gray-900"
                 type="password"
                 {...register("password", { required: true })}
                 placeholder="Password"
@@ -88,9 +92,12 @@ function Login() {
             <Link className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white bg-gray-700">
               f
             </Link>
-            <Link className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white bg-gray-700">
+            <button
+              onClick={setdarkMode}
+              className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white bg-gray-700"
+            >
               G+
-            </Link>
+            </button>
             <Link className="w-10 h-10 items-center justify-center inline-flex rounded-full font-bold text-lg border-2 border-white bg-gray-700">
               in
             </Link>

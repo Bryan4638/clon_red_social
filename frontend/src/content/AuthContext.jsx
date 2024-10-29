@@ -6,14 +6,12 @@ import {
   verifyTokenRequest,
 } from "../api/auth";
 import Cookies from "js-cookie";
-import PropTypes from "prop-types";
-import { set } from "zod";
 
 export const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-
+  
   if (!context) {
     throw new Error("useAuth debe usarse dentro de un AuthProvider");
   }
@@ -26,24 +24,25 @@ export const AuthProvider = ({ children }) => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   const signIn = async (values) => {
     try {
       const res = await LoginRequest(values);
       setUser(res.data);
       setIsAuth(true);
     } catch (error) {
-      //console.log(error)
       setErrors(error.response.data);
     }
   };
 
   const signUp = async (values) => {
     try {
+      console.log(values)
       const res = await RegisterRequest(values);
       setUser(res.data);
       setIsAuth(true);
     } catch (error) {
-      console.log(error)
+      //console.log(error)
       setErrors(error.response.data);
     }
   };
@@ -80,7 +79,6 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const res = await verifyTokenRequest(cookies.token);
-        //console.log(res);
         if (!res.data) return setIsAuth(false);
         setIsAuth(true);
         setUser(res.data);
@@ -92,6 +90,9 @@ export const AuthProvider = ({ children }) => {
     };
     checkLogin();
   }, []);
+
+
+  
 
   return (
     <AuthContext.Provider

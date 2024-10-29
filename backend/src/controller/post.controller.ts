@@ -1,23 +1,75 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import {SERVER_URL} from '../conf'
+import { File } from "../types";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
-
 
 export const createPost = async (req: Request, res: Response) => {
   try {
     const { content } = req.body;
-    
-    const imagePath = `${SERVER_URL}/public/users/${req.userName}/${req.file?.filename}` 
 
-    const id = req.userId
+    const files = req.files as File[];
+
+    const filenames: string[] = files.map(
+      (file: File) => `${req.userName}/${file.filename}`
+    );
+
+    const id = req.userId;
 
     const newPost = await prisma.post.create({
       data: {
         content: content,
         userId: id,
-        image: imagePath
+        image: filenames,
+      },
+      select: {
+        id: true,
+        content: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+        user: {
+          select: {
+            username: true,
+            avatar: true,
+          },
+        },
+        _count: {
+          select: {
+            reactions: true,
+            comments: true,
+          },
+        },
+        comments: {
+          orderBy: {createdAt: 'desc'},
+          select: {
+            id: true, // Si solo quieres contar los comentarios, puedes omitir esto
+            content: true,
+            createdAt: true,
+            userId:true,
+            user: {
+              select: {
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        reactions: {
+          select: {
+            id: true,
+            userId: true,
+            user:{
+              select:{
+                username: true,
+                avatar: true
+              }
+            }
+          },
+        },
       },
     });
 
@@ -25,6 +77,7 @@ export const createPost = async (req: Request, res: Response) => {
       data: newPost,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: "Server internal errors",
     });
@@ -35,7 +88,7 @@ export const getPosts = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
 
-    const pageSize = parseInt(req.query.pageSize as string) || 5 ;
+    const pageSize = parseInt(req.query.pageSize as string) || 5;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -43,14 +96,56 @@ export const getPosts = async (req: Request, res: Response) => {
     const postsFound = await prisma.post.findMany({
       skip: skip,
       take: take,
-      include: {
+      orderBy: {createdAt: 'desc' },
+      select: {
+        id: true,
+        content: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
         user: {
           select: {
             username: true,
-            avatar: true
-          }
-        }
-      }
+            avatar: true,
+          },
+        },
+        _count: {
+          select: {
+            reactions: true,
+            comments: true,
+          },
+        },
+        comments: {
+          skip: 0,
+          take: 3,
+          orderBy: {createdAt: 'desc'},
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            userId:true,
+            user: {
+              select: {
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        reactions: {
+          select: {
+            id: true,
+            userId: true,
+            user:{
+              select:{
+                username: true,
+                avatar: true
+              }
+            }
+          },
+        },
+      },
     });
 
     const totalPost = await prisma.post.count();
@@ -80,6 +175,53 @@ export const getPostID = async (req: Request, res: Response) => {
     const postFound = await prisma.post.findUnique({
       where: {
         id: id as string,
+      },
+      select: {
+        id: true,
+        content: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true,
+        user: {
+          select: {
+            username: true,
+            avatar: true,
+          },
+        },
+        _count: {
+          select: {
+            reactions: true,
+            comments: true,
+          },
+        },
+        comments: {
+          orderBy: {createdAt: 'desc'},
+          select: {
+            id: true, // Si solo quieres contar los comentarios, puedes omitir esto
+            content: true,
+            createdAt: true,
+            userId:true,
+            user: {
+              select: {
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        reactions: {
+          select: {
+            id: true,
+            userId: true,
+            user:{
+              select:{
+                username: true,
+                avatar: true
+              }
+            }
+          },
+        },
       },
     });
 
@@ -128,19 +270,84 @@ export const updatePost = async (req: Request, res: Response) => {
 
 export const deletePost = async (req: Request, res: Response) => {
   try {
-    const id =  req.params.id
-    const postFound = await prisma.post.deleteMany({
-      where:{
-        id
-      }
-    })
+    const id = req.params.id;
 
-    if (!postFound) return res.status(403).json({
-      message: "Post not Fount"
-    })
+    await prisma.comment.deleteMany({
+      where: {
+        postId: id,
+      },
+    });
+    await prisma.reaction.deleteMany({
+      where: {
+        postId: id,
+      },
+    });
+    const postFound = await prisma.post.delete({
+      where: {
+        id,
+      },
+    });
 
-    res.status(204).json({message: "post Deleted"})
+    if (!postFound)
+      return res.status(403).json({
+        message: "Post not Fount",
+      });
 
+    postFound.image.map((imagen) => {
+      const deletePath = path.join("src", "upload", "users", imagen);
+      fs.promises.rm(deletePath);
+    });
+
+    res.status(204).json({ message: "post Deleted" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: " Internal Server Error",
+    });
+  }
+};
+
+export const addLike = async (req: Request, res: Response) => {
+  try {
+    const idPost = req.params.id;
+
+    const idUser = req.userId;
+
+    const reaction = await prisma.reaction.create({
+      data: {
+        userId: idUser,
+        type: "like",
+        postId: idPost,
+      },
+    });
+
+    res.status(200).json({
+      idReaction: reaction.id,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: " Internal Server Error",
+    });
+  }
+};
+
+export const deleteLike = async (req: Request, res: Response) => {
+  try {
+    const idPost = req.params.id;
+
+    const idUser = req.userId;
+
+    await prisma.reaction.deleteMany({
+      where: {
+        AND: {
+          userId: idUser,
+          postId: idPost,
+        },
+      },
+    });
+
+    res.status(200).json({ message: "Reaction delete" });
   } catch (error) {
     console.log(error);
     res.status(500).json({

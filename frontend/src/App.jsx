@@ -7,6 +7,9 @@ import Register from "./pages/Register_and_Login/Register";
 import { ProtectedRoute } from "./ProtectedRoute";
 import NavBar from "./Components/Navbar";
 import NotFound from "./pages/404NotFound/NotFound";
+import PostEdit from "./pages/Home/Post/PostEdit";
+import Listpost from "./pages/Home/Post/Listpost";
+import PostDetail from "./pages/Home/Post/PostDetail";
 
 function App() {
   return (
@@ -18,9 +21,13 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route element={< NavBar/>}>
-              <Route path="/" element={<Home />} />
+            <Route element={<NavBar />}>
               <Route path="/profile" element={<Profile />} />
+              <Route element={<Home />}>
+                <Route path="/" element={<Listpost />} />
+                <Route path="/post-detail" element={<PostDetail/>}/>
+                <Route path="/post-edit" element={<PostEdit />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

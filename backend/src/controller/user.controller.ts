@@ -64,9 +64,15 @@ export const getUserId = async (req: Request, res: Response) => {
         id,
       },
       include: {
+        _count: true,
         posts: {
           skip,
           take,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            image: true,
+          },
         },
       },
     });
