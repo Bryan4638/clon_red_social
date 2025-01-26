@@ -1,6 +1,6 @@
 import Avatar from "./Avatar";
 import Item from "./Item";
-import Search from "./search";
+import Search from "./Search";
 
 function Nav() {
   return (

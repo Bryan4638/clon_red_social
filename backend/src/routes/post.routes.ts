@@ -8,7 +8,7 @@ import {
   getPosts,
   updatePost,
 } from "../controller/post.controller";
-import {upload} from '../libs/multer'
+import {upload} from '../middlewares/multer'
 import { authMiddleware } from "../middlewares/middlewares";
 
 const router = Router();
@@ -30,3 +30,6 @@ router.post("/post/:id/like", authMiddleware, addLike)
 router.delete("/post/:id/like", authMiddleware, deleteLike )
 
 export default router;
+
+
+//.array("image")

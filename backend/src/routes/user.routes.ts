@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/middlewares";
-import {deleteUser, getUserId, getUsers, updaetUser, userFollowing} from '../controller/user.controller'
+import {deleteUser, getUserId, getUsers, getUserSearch, updaetUser, userFollowing} from '../controller/user.controller'
 
 const router = Router();
 
 router.get("/users", authMiddleware, getUsers)
+
+router.get("/users/search", authMiddleware, getUserSearch)
 
 router.get("/user/:id", authMiddleware, getUserId)
 

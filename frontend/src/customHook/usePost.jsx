@@ -49,20 +49,24 @@ function usePost() {
   const createPost = async (post) => {
     try {
       const formData = new FormData();
-      console.log(post)
+      console.log(post);
       formData.append("content", post.content);
 
       for (let index = 0; index < post.image.length; index++) {
-       formData.append("image", post.image[index])
+        formData.append("image", post.image[index]);
       }
 
-      const newPost = await createPostRequest(formData)
+      const newPost = await createPostRequest(formData);
 
-      setPosts([newPost.data.data, ...posts])
-   
+      setPosts([newPost.data.data, ...posts]);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const nextPage = () => {
+    console.log("first")
+    setCurrentPage((prev) => prev + 1);
   };
 
   return {
@@ -71,6 +75,7 @@ function usePost() {
     error,
     isNextPage,
     currentPage,
+    nextPage,
     setCurrentPage,
     createPost,
     deletePost,

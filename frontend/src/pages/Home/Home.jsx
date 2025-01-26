@@ -10,7 +10,7 @@ function Home() {
           <SideBar />
         </div>
 
-        <div className="w-full lg:w-2/3 xl:w-2/5 pt-32 lg:pt-16  px-2">
+        <div className="w-full lg:w-2/3 xl:w-2/5 pt-32 lg:pt-16  px-2 ">
           <Outlet />
         </div>
 

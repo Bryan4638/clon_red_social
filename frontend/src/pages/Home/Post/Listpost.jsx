@@ -1,8 +1,9 @@
 import Post from "../../../Components/Post/Post";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import usePost from "../../../customHook/usePost";
 import Postform from "../../../Components/Post/Postform";
 import { Spinner } from "@material-tailwind/react";
+import { useInView } from "react-intersection-observer";
 
 function Listpost() {
   const {
@@ -16,9 +17,20 @@ function Listpost() {
     deletePost,
   } = usePost();
 
+  const { ref, inView, entry } = useInView({
+    /* Optional options */
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (!loading && isNextPage) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }, [inView]);
+
   return (
     <>
-      <Postform createPost={createPost}/>
+      <Postform createPost={createPost} />
 
       {posts.length >= 1 &&
         posts.map((post) => {
@@ -45,12 +57,12 @@ function Listpost() {
 
       <div className="flex justify-center pb-2">
         {error && !loading && <div>Ha avido un error</div>}
-        {!isNextPage && !loading && posts.length !== 0 &&(
+        {!isNextPage && !loading && posts.length !== 0 && (
           <h1 className="font-medium text-zinc-400 mt-3 mb-1">
             No hay más post para cargar
           </h1>
         )}
-        {isNextPage && posts.length >= 1 && !loading && (
+        {/* {isNextPage && posts.length >= 1 && !loading && (
           <button
             className="bg-emerald-500 h-10 w-52 rounded-md text-white font-medium mt-3 mb-1"
             onClick={() => {
@@ -59,8 +71,9 @@ function Listpost() {
           >
             Cargar más resultados
           </button>
-        )}
+        )} */}
       </div>
+      <div ref={ref}></div>
     </>
   );
 }

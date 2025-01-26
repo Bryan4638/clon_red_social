@@ -4,6 +4,46 @@ import bcryptjs from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+export const getUserSearch = async (req: Request, res: Response) => {
+  try {
+    const q = req.query.q as string;
+
+    console.log(q);
+
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            username: {
+              contains: q,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: q,
+              mode: "insensitive",
+            },
+          },
+          {
+            bio: {
+              contains: q,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    });
+
+    res.status(200).json({
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server Error" });
+  }
+};
+
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -23,8 +63,8 @@ export const getUsers = async (req: Request, res: Response) => {
         avatar: true,
         _count: {
           select: {
-            followers: true, 
-            following: true, 
+            followers: true,
+            following: true,
           },
         },
       },
@@ -173,15 +213,15 @@ export const userFollowing = async (req: Request, res: Response) => {
 
     const user = await prisma.follower.create({
       data: {
-        followerId: userfollowingID,
-        followedId: id,
+        followerId: id,
+        followedId: userfollowingID,
       },
     });
 
     console.log(user);
 
     res.status(204).json({
-      message: "User followind",
+      message: "User following",
     });
   } catch (error) {
     console.log(error);

@@ -55,7 +55,7 @@ export const register = async (req: Request, res: Response) => {
     });
 
     res.json({
-      userId: newUser.id,
+      id: newUser.id,
       usermane: newUser.username,
       email: newUser.email,
       avatar: newUser.avatar,
@@ -171,7 +171,7 @@ export const login = async (req: Request, res: Response) => {
       avatar: user.avatar,
       banner: user.banner,
       status: user.status,
-      userId: user.id,
+      id: user.id,
       reactions: user.reactions,
       userReactions
     });
@@ -188,6 +188,8 @@ export const verifyToken = async (req: Request, res: Response) => {
 
   const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
   if (!decode) return res.status(401);
+
+  console.log("decode id",decode.id)
 
   const userFound = await prisma.user.findUnique({
     where: { id: parseInt(decode.id) },
@@ -206,7 +208,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   const userReactions = userFound.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
   return res.json({
     
-    userId: userFound.id,
+    id: userFound.id,
     username: userFound.username,
     email: userFound.email,
     avatar: userFound.avatar,
