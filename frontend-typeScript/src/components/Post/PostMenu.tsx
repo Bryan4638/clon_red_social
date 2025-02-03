@@ -19,13 +19,15 @@ import { toast } from "sonner";
 interface PostMenuProps {
   isOpenDropDown: boolean;
   postId: string;
-  //deletePost: (postId: string) => Promise<void>;
+  deletePost: (postId: string) => Promise<void>;
 }
 
-const PostMenu: FC<PostMenuProps> = ({ isOpenDropDown, postId }) => {
-  const [IsOpenDelete, setIsOpenDelete] = useState(false);
+const PostMenu: FC<PostMenuProps> = ({
+  isOpenDropDown,
+  postId,
+  deletePost,
+}) => {
   const [loading, setLoading] = useState(false);
-  const [error, seterror] = useState<string | null>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -34,14 +36,14 @@ const PostMenu: FC<PostMenuProps> = ({ isOpenDropDown, postId }) => {
   const handleClick = async () => {
     try {
       setLoading(true);
-      //await deletePost(postId);
-      console.log(`Eliminado: ${postId}`);
+      await deletePost(postId);
+      toast.success(`Deleted post success`);
     } catch (error) {
       console.log(error);
-      seterror("Error deleting post");
+      toast.error("Error deleting post");
     } finally {
       setLoading(false);
-      setIsOpenDelete(!IsOpenDelete);
+      onClose()
     }
   };
 
@@ -55,8 +57,6 @@ const PostMenu: FC<PostMenuProps> = ({ isOpenDropDown, postId }) => {
 
   return (
     <>
-      {error && toast(error)}
-
       {isOpenDropDown && (
         <Dropdown>
           <DropdownTrigger>

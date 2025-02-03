@@ -12,11 +12,16 @@ import { useDebouncedCallback } from "use-debounce";
 import { User } from "../types";
 import { Link } from "react-router-dom";
 import useFollow from "../customHook/useFollow";
+import { useFollowStore } from "../store/useFollowStore";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "sonner";
 
 export default function SearchNav() {
   const [users, setUsers] = useState<User[] | []>([]);
   const [loading, setLoading] = useState(false);
-  const { loading: LoadingFolow, follow } = useFollow();
+  const { loading: LoadingFolow, follow, unFollow } = useFollow();
+  const followingList = useFollowStore((store) => store.followingList);
+  const { user: userAuth } = useAuth();
 
   const fetchUsers = async (query: string) => {
     setLoading(true);
@@ -40,11 +45,19 @@ export default function SearchNav() {
     }
   };
 
+  const handleUnfollow = (id: number) => () => {
+    unFollow(id);
+    toast.success("User unfollowed.");
+  };
+  const handleFollow = (id: number) => () => {
+    follow(id);
+    toast.success("User followed.");
+  };
   return (
     <Autocomplete
       aria-label="Select an employee"
       classNames={{
-        base: "max-w-xs",
+        base: "max-w-62",
         listboxWrapper: "max-h-[320px]",
         selectorButton: "text-default-500",
       }}
@@ -53,7 +66,7 @@ export default function SearchNav() {
       inputProps={{
         classNames: {
           input: "ml-1",
-          inputWrapper: "h-[48px]",
+          inputWrapper: "h-[25px]",
         },
       }}
       listboxProps={{
@@ -72,7 +85,7 @@ export default function SearchNav() {
           ],
         },
       }}
-      placeholder="Enter employee name"
+      placeholder="Search user"
       popoverProps={{
         offset: 10,
         classNames: {
@@ -84,41 +97,58 @@ export default function SearchNav() {
       startContent={
         <FaSearch className="text-default-400" size={20} strokeWidth={2.5} />
       }
-      variant="bordered"
     >
-      {(item) => (
-        <AutocompleteItem key={item.id} textValue={item.username}>
+      {(user) => (
+        <AutocompleteItem key={user.id} textValue={user.username}>
           <div className="flex justify-between items-center">
             {loading && <Spinner color="success" />}
             {!loading && (
               <>
                 <Link
-                  to={`/profile?q=${item?.id}`}
+                  to={`/profile?q=${user?.id}`}
                   className="flex gap-2 items-center"
                 >
                   <Avatar
-                    alt={item.username}
+                    alt={user.username}
                     className="flex-shrink-0"
                     size="sm"
-                    src={item.avatar}
+                    src={user.avatar}
                   />
                   <div className="flex flex-col">
-                    <span className="text-small">{item.username}</span>
+                    <span className="text-small">{user.username}</span>
                     <span className="text-tiny text-default-400">
-                      {item.email}
+                      {user.email}
                     </span>
                   </div>
                 </Link>
-                <Button
-                  isLoading={LoadingFolow}
-                  className="border-small mr-0.5 font-medium shadow-small"
-                  radius="full"
-                  size="sm"
-                  onPress={()=> follow(item.id)}
-                  variant="bordered"
-                >
-                  Follow
-                </Button>
+                {user.id !== userAuth?.id && (
+                  <>
+                    {followingList.includes(user.id) && (
+                      <Button
+                        isLoading={LoadingFolow}
+                        className="border-small mr-0.5 font-medium shadow-small"
+                        radius="full"
+                        size="sm"
+                        onPress={handleUnfollow(user.id)}
+                        variant="bordered"
+                      >
+                        Unfollow
+                      </Button>
+                    )}
+                    {!followingList.includes(user.id) && (
+                      <Button
+                        isLoading={LoadingFolow}
+                        className="border-small mr-0.5 font-medium shadow-small"
+                        radius="full"
+                        size="sm"
+                        onPress={handleFollow(user.id)}
+                        variant="bordered"
+                      >
+                        Follow
+                      </Button>
+                    )}
+                  </>
+                )}
               </>
             )}
           </div>

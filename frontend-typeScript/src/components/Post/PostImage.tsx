@@ -38,9 +38,9 @@ const PostImage: FC<PostImagePrps> = ({ postImage, id }) => {
               {index === 3 && postImage.length > 4 && (
                 <CardFooter
                   onClick={handleClick}
-                  className="justify-center before:bg-white/10 h-full w-full overflow-hidden absolute before:rounded-xl rounded-large shadow-small z-10"
+                  className="justify-center cursor-pointer before:bg-white/10 h-full w-full overflow-hidden absolute before:rounded-xl rounded-large shadow-small z-10"
                 >
-                  <h1 className="text-xl text-white/80">Show More Images.</h1>
+                  <h1 className="text-xl text-white/80 cursor-pointer">Show More Images.</h1>
                 </CardFooter>
               )}
             </Card>

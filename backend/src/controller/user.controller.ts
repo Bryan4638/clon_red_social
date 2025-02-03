@@ -92,12 +92,12 @@ export const getUserId = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
 
-    const page = parseInt(req.query.page as string) || 1;
+    // const page = parseInt(req.query.page as string) || 1;
 
-    const pageSize = parseInt(req.query.pageSize as string) || 5;
+    // const pageSize = parseInt(req.query.pageSize as string) || 5;
 
-    const skip = (page - 1) * pageSize;
-    const take = pageSize;
+    // const skip = (page - 1) * pageSize;
+    // const take = pageSize;
 
     const userFound = await prisma.user.findUnique({
       where: {
@@ -106,12 +106,17 @@ export const getUserId = async (req: Request, res: Response) => {
       include: {
         _count: true,
         posts: {
-          skip,
-          take,
+          // skip,
+          // take,
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
             image: true,
+          },
+        },
+        following: {
+          select: {
+            followedId: true,
           },
         },
       },
@@ -122,7 +127,7 @@ export const getUserId = async (req: Request, res: Response) => {
         userId: id,
       },
     });
-    const totalPages = Math.ceil(totalPost / pageSize);
+    // const totalPages = Math.ceil(totalPost / pageSize);
 
     if (!userFound) return res.status(403).json({ message: "User not Found" });
 
@@ -130,9 +135,9 @@ export const getUserId = async (req: Request, res: Response) => {
       data: userFound,
       meta: {
         totalPost,
-        page,
-        totalPages,
-        pageSize,
+        //   page,
+        //   totalPages,
+        //   pageSize,
       },
     });
   } catch (error) {
@@ -218,13 +223,39 @@ export const userFollowing = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(user);
-
     res.status(204).json({
       message: "User following",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server Error" });
+  }
+};
+
+export const userUnfollow = async (req: Request, res: Response) => {
+  try {
+    const userUnfollowingID = Number(req.params.id);
+
+    const id = req.userId;
+
+    await prisma.follower.deleteMany({
+      where: {
+        AND: [
+          {
+            followerId: id,
+          },
+          {
+            followedId: userUnfollowingID,
+          },
+        ],
+      },
+    });
+
+    res.status(204).json({
+      message: "User following",
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
   }
 };

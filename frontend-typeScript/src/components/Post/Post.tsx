@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { Comment as CommentType, Post as PostType } from "../../types";
 import { useState } from "react";
 
-function Post({ post }: { post: PostType }) {
+function Post({ post, deletePost }: { post: PostType, deletePost: (postId: string) => Promise<void> }) {
   const { user } = useAuth();
   const [comments, setComments] = useState(post.comments);
   const [countComments, setCountComments] = useState(post._count.comments);
@@ -48,7 +48,7 @@ function Post({ post }: { post: PostType }) {
           <PostMenu
             isOpenDropDown={post.userId === user?.id}
             postId={post.id}
-            //deletePost={deletePost}
+            deletePost={deletePost}
           />
         </div>
         {/* <!-- END POST AUTHOR --> */}

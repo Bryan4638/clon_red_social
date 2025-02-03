@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import { File } from "../types";
 import fs from "fs";
 import path from "path";
+import axios from "axios";
+import { FLASK_API_URL } from "../conf";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +12,29 @@ export const createPost = async (req: Request, res: Response) => {
   try {
     const { content } = req.body;
 
-    const files = req.files as File[];
+    const files = req.files as Express.Multer.File[];
+
+    const imagePredictions: string[] = [];
+
+    for (const file of files) {
+      const formData = new FormData();
+      const blob = new Blob([file.buffer], { type: file.mimetype });
+      formData.append("image", blob, file.originalname);
+
+      try {
+        const response = await axios.post(FLASK_API_URL, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const prediction = response.data.predicted_class;
+        imagePredictions.push(prediction);
+      } catch (error) {
+        console.error(`Error al clasificar ${file.originalname}:`, error);
+        imagePredictions.push("Desconocido"); 
+      }
+    }
 
     const filenames: string[] = files.map(
       (file: File) => `${req.userName}/${file.filename}`
@@ -23,6 +47,7 @@ export const createPost = async (req: Request, res: Response) => {
         content: content,
         userId: id,
         image: filenames,
+        tags: imagePredictions,
       },
       select: {
         id: true,
@@ -44,12 +69,12 @@ export const createPost = async (req: Request, res: Response) => {
           },
         },
         comments: {
-          orderBy: {createdAt: 'desc'},
+          orderBy: { createdAt: "desc" },
           select: {
             id: true, // Si solo quieres contar los comentarios, puedes omitir esto
             content: true,
             createdAt: true,
-            userId:true,
+            userId: true,
             user: {
               select: {
                 username: true,
@@ -62,12 +87,12 @@ export const createPost = async (req: Request, res: Response) => {
           select: {
             id: true,
             userId: true,
-            user:{
-              select:{
+            user: {
+              select: {
                 username: true,
-                avatar: true
-              }
-            }
+                avatar: true,
+              },
+            },
           },
         },
       },
@@ -96,7 +121,7 @@ export const getPosts = async (req: Request, res: Response) => {
     const postsFound = await prisma.post.findMany({
       skip: skip,
       take: take,
-      orderBy: {createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         content: true,
@@ -119,12 +144,12 @@ export const getPosts = async (req: Request, res: Response) => {
         comments: {
           skip: 0,
           take: 3,
-          orderBy: {createdAt: 'desc'},
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
             content: true,
             createdAt: true,
-            userId:true,
+            userId: true,
             user: {
               select: {
                 username: true,
@@ -137,12 +162,12 @@ export const getPosts = async (req: Request, res: Response) => {
           select: {
             id: true,
             userId: true,
-            user:{
-              select:{
+            user: {
+              select: {
                 username: true,
-                avatar: true
-              }
-            }
+                avatar: true,
+              },
+            },
           },
         },
       },
@@ -196,12 +221,12 @@ export const getPostID = async (req: Request, res: Response) => {
           },
         },
         comments: {
-          orderBy: {createdAt: 'desc'},
+          orderBy: { createdAt: "desc" },
           select: {
             id: true, // Si solo quieres contar los comentarios, puedes omitir esto
             content: true,
             createdAt: true,
-            userId:true,
+            userId: true,
             user: {
               select: {
                 username: true,
@@ -214,12 +239,12 @@ export const getPostID = async (req: Request, res: Response) => {
           select: {
             id: true,
             userId: true,
-            user:{
-              select:{
+            user: {
+              select: {
                 username: true,
-                avatar: true
-              }
-            }
+                avatar: true,
+              },
+            },
           },
         },
       },

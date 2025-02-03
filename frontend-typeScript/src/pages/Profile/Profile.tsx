@@ -9,6 +9,7 @@ import { User } from "../../types";
 import { Tabs, Tab, Chip, Button } from "@heroui/react";
 import useFollow from "../../customHook/useFollow";
 import { FaBookmark, FaUserCircle } from "react-icons/fa";
+import { useFollowStore } from "../../store/useFollowStore";
 
 export const GalleryIcon = (props) => {
   return (
@@ -43,13 +44,20 @@ function Profile() {
   const userId = searchParams.get("q") ?? "";
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
 
-  const { loading: loadingFolow, follow } = useFollow();
-
+  const { loading: loadingFolow, follow, unFollow } = useFollow();
+  const followingList = useFollowStore((store) => store.followingList);
   const { user: userAuth } = useAuth();
 
   const handleCLickFollow = (id: number) => () => {
     follow(id);
+    setFollowersCount(followersCount + 1);
+  };
+
+  const handleCLickUnFollow = (id: number) => () => {
+    unFollow(id);
+    setFollowersCount(followersCount - 1);
   };
 
   useEffect(() => {
@@ -57,6 +65,7 @@ function Profile() {
     getUserRequest(userId)
       .then((res) => {
         setUser(res.data.data);
+        setFollowersCount(res.data.data._count.followers);
       })
       .catch((err) => {
         console.log(err);
@@ -68,7 +77,7 @@ function Profile() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat("es-ES", {
+    return new Intl.DateTimeFormat("en-EN", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -138,13 +147,26 @@ function Profile() {
                         </a>
                       )}
                       {parseInt(userId) !== userAuth?.id && (
-                        <Button
-                          isLoading={loadingFolow}
-                          onPress={handleCLickFollow(user.id)}
-                          className="inline-flex justify-center px-4 py-2 border dark:bg-emerald-700 dark:hover:bg-emerald-900 dark:border-emerald-400 border-emerald-500 shadow-sm text-md font-bold rounded-full text-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-dark-second focus:ring-emerald-500"
-                        >
-                          Follow
-                        </Button>
+                        <>
+                          {followingList.includes(user.id) && (
+                            <Button
+                              isLoading={loadingFolow}
+                              onPress={handleCLickUnFollow(user.id)}
+                              className="inline-flex justify-center px-4 py-2 border dark:bg-emerald-700 dark:hover:bg-emerald-900 dark:border-emerald-400 border-emerald-500 shadow-sm text-md font-bold rounded-full text-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-dark-second focus:ring-emerald-500"
+                            >
+                              Unfollow
+                            </Button>
+                          )}
+                          {!followingList.includes(user.id) && (
+                            <Button
+                              isLoading={loadingFolow}
+                              onPress={handleCLickFollow(user.id)}
+                              className="inline-flex justify-center px-4 py-2 border dark:bg-emerald-700 dark:hover:bg-emerald-900 dark:border-emerald-400 border-emerald-500 shadow-sm text-md font-bold rounded-full text-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-dark-second focus:ring-emerald-500"
+                            >
+                              Follow
+                            </Button>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -157,7 +179,7 @@ function Profile() {
 
                   <div className="sm:py-0 py-4 flex justify-start items-center gap-5">
                     <p className="text-sm dark:text-dark-txt text-neutral-300">
-                      {user._count.followers} Followers
+                      {followersCount} Followers
                     </p>
                     <p className="text-sm dark:text-dark-txt text-neutral-300">
                       {user._count.following} Following

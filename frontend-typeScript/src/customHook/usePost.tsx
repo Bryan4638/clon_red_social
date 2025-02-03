@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPostRequest, deletePostRequest } from "../api/post";
-import { Post } from "../types";
+import { Post, PreviewFile } from "../types";
 
 function usePost() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -47,15 +47,14 @@ function usePost() {
     }
   };
 
-/*   const createPost = async (post) => {
+  const createPost = async ({content, image}: {content: string, image: PreviewFile[]}) => {
     try {
       const formData = new FormData();
-      console.log(post);
-      formData.append("content", post.content);
+      formData.append("content", content);
 
-      for (let index = 0; index < post.image.length; index++) {
-        formData.append("image", post.image[index]);
-      }
+      image.map((file)=>{
+        formData.append("image", file.file)
+      })
 
       const newPost = await createPostRequest(formData);
 
@@ -63,7 +62,7 @@ function usePost() {
     } catch (error) {
       console.log(error);
     }
-  }; */
+  };
 
   const nextPage = () => {
     setCurrentPage((prev) => prev + 1);
@@ -77,7 +76,7 @@ function usePost() {
     currentPage,
     nextPage,
     setCurrentPage,
-    //createPost,
+    createPost,
     deletePost,
   };
 }

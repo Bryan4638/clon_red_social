@@ -1,10 +1,9 @@
 import multer from "multer";
 import path from "path";
-import fs from 'fs';
+import fs from "fs";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
 
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
@@ -16,10 +15,10 @@ const storage = multer.diskStorage({
       });
 
       if (!userFound) {
-        return cb(new Error('User ID is missing in the request'), "");
+        return cb(new Error("User ID is missing in the request"), "");
       }
 
-      req.userName = userFound.username
+      req.userName = userFound.username;
 
       const uploadPath = path.join(
         "src",
@@ -33,7 +32,7 @@ const storage = multer.diskStorage({
       cb(null, uploadPath);
     } catch (error) {
       console.log(error);
-      cb(error as Error, "")
+      cb(error as Error, "");
     }
   },
   filename: function (req, file, cb) {

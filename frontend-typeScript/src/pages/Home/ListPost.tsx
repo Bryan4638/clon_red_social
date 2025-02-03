@@ -23,7 +23,7 @@ function ListPost() {
   return (
     <>
       <div>
-        <Postform />
+        <Postform createPost={createPost}/>
 
         <InfiniteScroll
           dataLength={posts.length}
@@ -41,14 +41,14 @@ function ListPost() {
             <div className="w-full flex justify-center py-5">
               {Post.length !== 0 && (
                 <span className="text-lg text-gray-600 font-bold">
-                  No hay más Productos para cargar
+                  No hay más Post para cargar
                 </span>
               )}
             </div>
           }
         >
           {posts.map((post) => {
-            return <Post post={post} key={post.id}></Post>;
+            return <Post post={post} key={post.id} deletePost={deletePost}/>
           })}
         </InfiniteScroll>
         {error && toast.error(error)}

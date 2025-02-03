@@ -1,5 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useState, useContext, useEffect, PropsWithChildren, FC} from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  PropsWithChildren,
+  FC,
+} from "react";
 import {
   LoginRequest,
   LogoutRequest,
@@ -8,6 +15,7 @@ import {
 } from "../api/auth";
 import Cookies from "js-cookie";
 import { User, UserAuth } from "../types";
+import { useFollowStore } from "../store/useFollowStore";
 
 interface ContextAuth {
   user: User | null;
@@ -35,11 +43,13 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const setFollowingList = useFollowStore((store) => store.setFollowingList);
 
   const signIn = async (values: UserAuth) => {
     try {
       const res = await LoginRequest(values);
       setUser(res.data);
+      setFollowingList(res.data.following);
       setIsAuth(true);
     } catch (error) {
       console.log(error);
@@ -52,6 +62,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       console.log(values);
       const res = await RegisterRequest(values);
       setUser(res.data);
+      setFollowingList(res.data.following);
       setIsAuth(true);
     } catch (error) {
       console.log(error);
@@ -93,16 +104,18 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         if (!res.data) return setIsAuth(false);
         setIsAuth(true);
         setUser(res.data);
+        setFollowingList(res.data.following);
         setLoading(false);
       } catch (error) {
-        console.log(error)
-        setErrors(["Ocurrio en error al hacer la peticion"])
+        console.log(error);
+        setErrors(["Ocurrio en error al hacer la peticion"]);
+        setFollowingList([]);
         setIsAuth(false);
         setLoading(false);
       }
     };
     checkLogin();
-  }, []);
+  }, [setFollowingList]);
 
   return (
     <AuthContext.Provider

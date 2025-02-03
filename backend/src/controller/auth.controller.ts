@@ -4,11 +4,10 @@ import bcryptjs from "bcryptjs";
 import { createToken } from "../libs/jwt";
 import { TOKEN_SECRET } from "../conf";
 import jwt from "jsonwebtoken";
-import {TokenPayload} from '../types'
+import { TokenPayload } from "../types";
 import { sendEmail } from "../libs/mail.conf";
 
 const prisma = new PrismaClient();
-
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -32,21 +31,30 @@ export const register = async (req: Request, res: Response) => {
         password: hashedPassword,
         status: false,
       },
-      include:{
+      include: {
         reactions: {
-          select:{
+          select: {
             postId: true,
-            commentId: true
-          }
+            commentId: true,
+          },
         },
-      }
+        following: {
+          select: {
+            followedId: true,
+          },
+        },
+      },
     });
 
     const token = await createToken(String(newUser.id));
 
     //await sendEmail(email, username, token);
-    const userReactions = newUser.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
-    
+    const userReactions = newUser.reactions.flatMap((reaction) => [
+      reaction.postId,
+      reaction.commentId,
+    ]);
+
+    const following = newUser.following.flatMap((follow) => follow.followedId);
 
     res.cookie("token", token, {
       httpOnly: false,
@@ -61,7 +69,8 @@ export const register = async (req: Request, res: Response) => {
       avatar: newUser.avatar,
       banner: newUser.banner,
       reactions: newUser.reactions,
-      userReactions
+      userReactions,
+      following
     });
   } catch (error) {
     console.log(error);
@@ -131,19 +140,23 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const user = await prisma.user.findFirst({ 
-      where: { 
-        email 
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
       },
-      include:{
+      include: {
         reactions: {
-          select:{
+          select: {
             postId: true,
-            commentId: true
-          }
+            commentId: true,
+          },
         },
-        
-      }
+        following: {
+          select: {
+            followedId: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -158,7 +171,12 @@ export const login = async (req: Request, res: Response) => {
 
     const token = await createToken(String(user.id));
 
-    const userReactions = user.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
+    const userReactions = user.reactions.flatMap((reaction) => [
+      reaction.postId,
+      reaction.commentId,
+    ]);
+
+    const following = user.following.flatMap((follow) => follow.followedId);
 
     res.cookie("token", token, {
       httpOnly: false,
@@ -173,14 +191,14 @@ export const login = async (req: Request, res: Response) => {
       status: user.status,
       id: user.id,
       reactions: user.reactions,
-      userReactions
+      userReactions,
+      following,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json("Error del servidor");
   }
 };
-
 
 export const verifyToken = async (req: Request, res: Response) => {
   const { token } = req.cookies;
@@ -189,42 +207,51 @@ export const verifyToken = async (req: Request, res: Response) => {
   const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
   if (!decode) return res.status(401);
 
-  console.log("decode id",decode.id)
+  console.log("decode id", decode.id);
 
   const userFound = await prisma.user.findUnique({
     where: { id: parseInt(decode.id) },
-    include:{
+    include: {
       reactions: {
-        select:{
+        select: {
           postId: true,
-          commentId: true
-        }
+          commentId: true,
+        },
       },
-    }
+      following: {
+        select: {
+          followedId: true,
+        },
+      },
+    },
   });
-  
-  if (!userFound) return res.status(401).json({message: "User Not found"});
 
-  const userReactions = userFound.reactions.flatMap((reaction)=> [reaction.postId, reaction.commentId])
+  if (!userFound) return res.status(401).json({ message: "User Not found" });
+
+  const following = userFound.following.flatMap((follow) => follow.followedId);
+
+  const userReactions = userFound.reactions.flatMap((reaction) => [
+    reaction.postId,
+    reaction.commentId,
+  ]);
   return res.json({
-    
     id: userFound.id,
     username: userFound.username,
     email: userFound.email,
     avatar: userFound.avatar,
     banner: userFound.banner,
     reactions: userFound.reactions,
-    userReactions 
+    following,
+    userReactions,
   });
 };
 
 export const logout = (req: Request, res: Response) => {
-
-  console.log("hola")
+  console.log("hola");
   res.cookie("token", "", {
     httpOnly: false,
     secure: true,
     sameSite: "none",
   });
-  return res.status(200).json({message: "logout"});
+  return res.status(200).json({ message: "logout" });
 };

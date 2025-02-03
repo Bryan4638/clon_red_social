@@ -1,23 +1,39 @@
 import { useState } from "react";
-import { userFollowRequest } from "../api/user";
 import { toast } from "sonner";
+import { useFollowStore } from "../store/useFollowStore";
 
 function useFollow() {
   const [loading, setLoading] = useState(false);
+  const userFollow = useFollowStore((store) => store.userFollow);
+  const userUnfollow = useFollowStore((store) => store.userUnfollow);
 
   const follow = (id: number) => {
-    setLoading(true)
-    userFollowRequest(id).then((res)=>{
-      toast.success("Follow user success")
-    }).catch((err)=>{
-      console.log(err)
-      toast.error("Follow user error.")
-    }).finally(()=>{
-      setLoading(false)
-    })
+    setLoading(true);
+    userFollow(id)
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Follow user error.");
+        setLoading(false);
+      });
   };
 
-  return {follow, loading}
+  const unFollow = (id: number) => {
+    setLoading(true);
+    userUnfollow(id)
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Follow user error.");
+        setLoading(false);
+      });
+  };
+
+  return { follow, unFollow, loading };
 }
 
 export default useFollow;

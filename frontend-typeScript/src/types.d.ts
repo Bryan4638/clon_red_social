@@ -78,3 +78,8 @@ export interface Meta {
   totalPages: number;
   pageSize: number;
 }
+
+export interface PreviewFile {
+  file: File;
+  previewUrl: string; // URL temporal para mostrar en <img>
+}
