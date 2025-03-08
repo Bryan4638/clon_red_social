@@ -6,10 +6,11 @@ import { SERVER_URL } from "../../config";
 import { MdVerified } from "react-icons/md";
 import { User } from "../../types";
 
-import { Tabs, Tab, Chip, Button } from "@heroui/react";
+import { Tabs, Tab, Chip, Button, useDisclosure } from "@heroui/react";
 import useFollow from "../../customHook/useFollow";
 import { FaBookmark, FaUserCircle } from "react-icons/fa";
 import { useFollowStore } from "../../store/useFollowStore";
+import EditProfile from "../../components/EditProfile";
 
 export const GalleryIcon = (props) => {
   return (
@@ -49,6 +50,8 @@ function Profile() {
   const { loading: loadingFolow, follow, unFollow } = useFollow();
   const followingList = useFollowStore((store) => store.followingList);
   const { user: userAuth } = useAuth();
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleCLickFollow = (id: number) => () => {
     follow(id);
@@ -142,10 +145,18 @@ function Profile() {
                       {" "}
                       {/* {% if user.is_authenticated and user == profile.user %} */}
                       {parseInt(userId) === userAuth?.id && (
-                        <a className="inline-flex justify-center px-4 py-2 border dark:bg-emerald-700 dark:hover:bg-emerald-900 dark:border-emerald-400 border-emerald-500 shadow-sm text-md font-bold rounded-full text-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-dark-second focus:ring-emerald-500">
+                        <button
+                          onClick={() => onOpen()}
+                          className="inline-flex justify-center px-4 py-2 border dark:bg-emerald-700 dark:hover:bg-emerald-900 dark:border-emerald-400 border-emerald-500 shadow-sm text-md font-bold rounded-full text-gray-200 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-dark-second focus:ring-emerald-500"
+                        >
                           <span>Edit Profile</span>
-                        </a>
+                        </button>
                       )}
+                      <EditProfile
+                        isOpen={isOpen}
+                        onOpenChange={onOpenChange}
+                        user={user}
+                      />
                       {parseInt(userId) !== userAuth?.id && (
                         <>
                           {followingList.includes(user.id) && (

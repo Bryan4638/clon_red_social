@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { File } from "../types";
+
 import bcryptjs from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -150,33 +152,33 @@ export const updaetUser = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
 
-    const { username, email, password, bio } = req.body;
+    const { firstName, location, url, bio } = req.body;
 
-    const userFound = await prisma.user.findUnique({
-      where: {
-        id,
-      },
-    });
+    const files = req.files;
 
-    if (!userFound) return res.status(403).json({ message: "User not Found" });
+    console.log({ files, firstName, location, url, bio, file: req.file, id });
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    // const userFound = await prisma.user.findUnique({
+    //   where: {
+    //     id,
+    //   },
+    // });
 
-    const userUpdate = await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        username,
-        email,
-        password: hashedPassword,
-        bio,
-      },
-    });
+    // if (!userFound) return res.status(403).json({ message: "User not Found" });
 
-    res.status(200).json({
-      data: userUpdate,
-    });
+    // const userUpdate = await prisma.user.update({
+    //   where: {
+    //     id,
+    //   },
+    //   data: {
+
+    //     bio,
+    //   },
+    // });
+
+    // res.status(200).json({
+    //   data: userUpdate,
+    // });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server Error" });

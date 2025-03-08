@@ -9,6 +9,20 @@ import {
   userFollowing,
   userUnfollow,
 } from "../controller/user.controller";
+import multer from "multer";
+import path from "path";
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "upload/images"); // Carpeta donde se guardarán los archivos
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Configuración del middleware Multer
+const upload = multer({ storage: storage });
 
 const router = Router();
 
@@ -18,7 +32,7 @@ router.get("/users/search", authMiddleware, getUserSearch);
 
 router.get("/user/:id", authMiddleware, getUserId);
 
-router.put("/user/:id", authMiddleware, updaetUser);
+router.put("/user/:id", authMiddleware, upload.single("image"), updaetUser);
 
 router.delete("/user/:id", authMiddleware, deleteUser);
 

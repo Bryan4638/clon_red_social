@@ -38,6 +38,7 @@ export interface Post {
   image: string[];
   createdAt: string;
   updatedAt: string;
+  tags: string[] | undefined;
   userId: number;
   user: User;
   comments: Comment[];

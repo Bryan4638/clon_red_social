@@ -10,7 +10,13 @@ import { Link } from "react-router-dom";
 import { Comment as CommentType, Post as PostType } from "../../types";
 import { useState } from "react";
 
-function Post({ post, deletePost }: { post: PostType, deletePost: (postId: string) => Promise<void> }) {
+function Post({
+  post,
+  deletePost,
+}: {
+  post: PostType;
+  deletePost: (postId: string) => Promise<void>;
+}) {
   const { user } = useAuth();
   const [comments, setComments] = useState(post.comments);
   const [countComments, setCountComments] = useState(post._count.comments);
@@ -59,10 +65,17 @@ function Post({ post, deletePost }: { post: PostType, deletePost: (postId: strin
             <span>{post.content}</span>
           </Link>
         </div>
+        <div>
+          {post.tags &&
+            post.tags.map((tag, index) => {
+              console.log(tag);
+              return <strong key={index}>#{tag}</strong>;
+            })}
+        </div>
         {/* <!-- END POST CONTENT --> */}
 
         {/* <!-- POST IMAGE --> */}
-        <PostImage postImage={post.image} id={post.id}/>
+        <PostImage postImage={post.image} id={post.id} />
         {/* <!-- END POST IMAGE --> */}
 
         {/* <!-- POST ACTION AND REACTION--> */}
@@ -77,7 +90,10 @@ function Post({ post, deletePost }: { post: PostType, deletePost: (postId: strin
         </div>
         {post._count.comments > 3 && (
           <div className="py-2 px-6 pb-2">
-            <Link to={`/post-detail?post=${post.id}`} className="text-sm cursor-pointer hover:border-b-2 hover:border-gray-600 font-semibold text-gray-600">
+            <Link
+              to={`/post-detail?post=${post.id}`}
+              className="text-sm cursor-pointer hover:border-b-2 hover:border-gray-600 font-semibold text-gray-600"
+            >
               Ver los {countComments} comentarios
             </Link>
           </div>

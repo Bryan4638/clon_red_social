@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import { FLASK_API_URL } from "../conf";
+import FormData from "form-data";
 
 const prisma = new PrismaClient();
 
@@ -18,21 +19,24 @@ export const createPost = async (req: Request, res: Response) => {
 
     for (const file of files) {
       const formData = new FormData();
-      const blob = new Blob([file.buffer], { type: file.mimetype });
-      formData.append("image", blob, file.originalname);
+
+      const filePath = path.resolve(file.path);
+
+      formData.append("image", fs.createReadStream(filePath), {
+        filename: file.originalname,
+        contentType: file.mimetype,
+      });
 
       try {
         const response = await axios.post(FLASK_API_URL, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: formData.getHeaders(),
         });
 
         const prediction = response.data.predicted_class;
         imagePredictions.push(prediction);
       } catch (error) {
-        console.error(`Error al clasificar ${file.originalname}:`, error);
-        imagePredictions.push("Desconocido"); 
+        console.error(`Error clasificando ${file.originalname}:`, error);
+        imagePredictions.push("Desconocido");
       }
     }
 
@@ -56,6 +60,7 @@ export const createPost = async (req: Request, res: Response) => {
         createdAt: true,
         updatedAt: true,
         userId: true,
+        tags: true,
         user: {
           select: {
             username: true,
@@ -129,6 +134,7 @@ export const getPosts = async (req: Request, res: Response) => {
         createdAt: true,
         updatedAt: true,
         userId: true,
+        tags: true,
         user: {
           select: {
             username: true,
@@ -208,6 +214,7 @@ export const getPostID = async (req: Request, res: Response) => {
         createdAt: true,
         updatedAt: true,
         userId: true,
+        tags: true,
         user: {
           select: {
             username: true,
